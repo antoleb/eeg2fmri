@@ -11,6 +11,7 @@ class FmriTransformer:
         assert frame_creation_time % num_slices == 0
 
         self.num_slices = num_slices
+        self.fmri_scale = fmri_scale
         self.frame_creation_time = frame_creation_time
         self.slice_creation_time = frame_creation_time // num_slices
 
