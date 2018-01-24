@@ -8,6 +8,7 @@ import mne
 import torch
 import os
 
+
 class Sampler:
     def __init__(self, root_dir, random_seed=42, segment_length=1024, eeg_nperseg=63, eeg_padded=False, eeg_scale=1e+5,
                  fmri_scale=4095**-1,num_slices=30, frame_creation_time=540, step=20):
