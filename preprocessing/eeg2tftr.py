@@ -15,15 +15,15 @@ class Eeg2Tftr:
         self.padded = padded
         self.scale = scale
 
-    def transform(self, signal):
+    def transform(self, sig):
         """
         Args:
-            signal: signal to transform
+            sig: signal to transform
 
         Returns: transfored to time-freq matrix signal
 
         """
-        f, t, ft = signal.stft(signal, padded=self.padded, nperseg=self.nperseg)
+        f, t, ft = signal.stft(sig, padded=self.padded, nperseg=self.nperseg)
         ft = np.log1p(np.abs(ft))
         ft *= self.scale
         return ft
