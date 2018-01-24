@@ -32,8 +32,10 @@ class Batcher:
 
         """
         times = np.random.choice(self.possible_samples, size=batch_size)
-        x_batch = np.array([np.load('x_{}.npy'.format(time)) for time in times])
-        y_batch = np.array([np.load('y_{}.npy'.format(time)) for time in times])
+        x_batch = np.array([np.load(os.path.join(self.directory, 'x_{}.npy'.format(time)))
+                            for time in times])
+        y_batch = np.array([np.load(os.path.join(self.directory, 'y_{}.npy'.format(time)))
+                            for time in times])
 
         x_batch = torch.FloatTensor(x_batch)
         y_batch = torch.FloatTensor(y_batch)
