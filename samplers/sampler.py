@@ -74,6 +74,7 @@ class Sampler:
 
             x = eegHandler.transform(signal)
             y = fmriHandler.get_fmri(end, fmri)
+            y = np.rollaxis(y, 2)
 
             x_path = os.path.join(dataset_path, 'x_{}.npy'.format(end))
             y_path = os.path.join(dataset_path, 'y_{}.npy'.format(end))

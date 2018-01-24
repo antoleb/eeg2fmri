@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 
-class Batcher:
+class DiskBatcher:
     def __init__(self, directory, min_time, max_time):
         """
         Expects dataset created by Sampler
