@@ -65,7 +65,8 @@ class Sampler:
         fmri = self.fmri_data[man]
 
         eegHandler = Eeg2Tftr(nperseg=self.eeg_nperseg, padded=self.eeg_padded, scale=self.eeg_scale)
-        fmriHandler = FmriTransformer(num_slices=self.num_slices, frame_creation_time=self.frame_creation_time)
+        fmriHandler = FmriTransformer(num_slices=self.num_slices, frame_creation_time=self.frame_creation_time,
+                                      fmri_scale=self.fmri_scale)
 
         start = 0
         end = start + self.segment_length
