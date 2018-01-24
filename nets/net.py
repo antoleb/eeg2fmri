@@ -133,7 +133,7 @@ class Net(nn.Module):
                                  self.up_block32,
                                  self.up_block64,
                                  self.result,
-                                 nn.ReLU(),
+                                 #nn.ReLU(),
                                  )
 
     def forward(self, x):
