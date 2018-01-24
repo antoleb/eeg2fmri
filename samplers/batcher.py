@@ -19,7 +19,7 @@ class Batcher:
         for file_name in file_names:
             if file_name[0] == 'x':
                 continue
-            num = int(file_name[1:-4])
+            num = int(file_name[2:-4])
             if min_time <= num <= max_time:
                 self.possible_samples.append(num)
 
