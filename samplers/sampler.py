@@ -70,7 +70,7 @@ class Sampler:
 
         start = 0
         end = start + self.segment_length
-        while end < eeg.shape[1] and end <= self.frame_creation_time * fmri.shape[-1]:
+        while end < eeg.shape[1] and end <= self.frame_creation_time * (fmri.shape[-1] - 1):
             signal = eeg[..., start:end]
 
             x = eegHandler.transform(signal)
