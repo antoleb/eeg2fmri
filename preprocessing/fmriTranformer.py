@@ -2,7 +2,7 @@ import numpy as np
 
 
 class FmriTransformer:
-    def __init__(self, num_slices=30, frame_creation_time=540, fmri_scale=4095):
+    def __init__(self, num_slices=30, frame_creation_time=540, fmri_scale=4095**-1):
         """
         Args:
             num_slices: number of vertical slices
@@ -30,4 +30,4 @@ class FmriTransformer:
             k = (time % self.frame_creation_time) / self.frame_creation_time
             result[..., i] = fmri_tensor[..., i, frame_time - 1] * k + fmri_tensor[..., i, frame_time] * (1 - k)
             time += self.slice_creation_time
-        return result / self.fmri_scale
+        return result * self.fmri_scale
