@@ -30,4 +30,4 @@ class FmriTransformer:
             k = (time % self.frame_creation_time) / self.frame_creation_time
             result[..., i] = fmri_tensor[..., i, frame_time - 1] * k + fmri_tensor[..., i, frame_time] * (1 - k)
             time += self.slice_creation_time
-        return result
+        return result / self.fmri_scale
