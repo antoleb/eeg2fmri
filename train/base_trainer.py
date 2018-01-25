@@ -5,14 +5,16 @@ import torch
 import os
 import numpy as np
 
+
 class BaseTrainer:
     def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir):
         assert not os.path.exists(save_dir)
         os.makedirs(save_dir)
 
         self.save_dir = save_dir
-        self.train_batcher = Batcher(data_dir, 0, 540 * num_train_frames)
-        self.val_batcher = Batcher(data_dir, 540 * (num_train_frames + 1), 540 * (num_train_frames + num_val_frames))
+        #sample may use information about next two frames
+        self.train_batcher = Batcher(data_dir, 0, 540 * (num_train_frames - 1))
+        self.val_batcher = Batcher(data_dir, 540 * (num_train_frames + 1), 540 * (num_train_frames + num_val_frames - 1))
         self.net = Net().cuda()
         self.loss = torch.nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=1e-4)
