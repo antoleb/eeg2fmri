@@ -24,12 +24,10 @@ class FmriTransformer:
         Returns: smooted fmri for time
 
         """
-        time_shift = np.array([self.slice_creation_time * i for i in range(self.num_slices)])
-        time_shift = time - time_shift[np.newaxis, np.newaxis, ...]
-        frame_time = time // self.frame_creation_time
-        koeff = (time_shift % self.frame_creation_time) / self.frame_creation_time
-
-        assert frame_time < fmri_tensor.shape[-1]
-        result = fmri_tensor[..., frame_time - 1] * koeff + fmri_tensor[..., frame_time] * (1 - koeff)
-        result *= self.fmri_scale
+        result = np.zeros_like(fmri_tensor[..., 0])
+        for i in range(self.num_slices):
+            frame_time = time // self.frame_creation_time
+            k = (time % self.frame_creation_time) / self.frame_creation_time
+            result[..., i] = fmri_tensor[..., i, frame_time - 1] * k + fmri_tensor[..., i, frame_time] * (1 - k)
+            time += self.slice_creation_time
         return result
