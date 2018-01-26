@@ -44,7 +44,7 @@ class BaseTester:
             eeg = torch.autograd.Variable(eeg)
             eeg = eeg.cuda()
 
-            output = self.net(eeg).float().data.numpy()
+            output = self.net(eeg).cpu().data.numpy()
 
             frame_index = time // self.frame_creation_time
             slice_index = (time % self.frame_creation_time) // self.slice_creation_time
