@@ -4,6 +4,7 @@ import torch
 import os
 import numpy as np
 
+
 class BaseTester:
     def __init__(self, report_directory, fmri_tensor, eeg_tensor, eeg_transformer, first_test_frame, last_test_frame,
                  first_train_frame, last_train_frame,
@@ -37,7 +38,7 @@ class BaseTester:
         net_losses = []
         base_losses = []
         while time < (self.last_test_frame + 1) * self.frame_creation_time:
-            eeg = self.eeg_tensor[time-self.segment_length:time]
+            eeg = self.eeg_tensor[:,time-self.segment_length:time]
             eeg = np.array([self.eeg_transformer.transform(eeg)])
             eeg = torch.FloatTensor(eeg)
             eeg = torch.autograd.Variable(eeg)
