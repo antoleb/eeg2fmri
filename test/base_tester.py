@@ -37,7 +37,7 @@ class BaseTester:
         time = self.first_test_frame * self.frame_creation_time
         net_losses = []
         base_losses = []
-        while time < (self.last_test_frame + 1) * self.frame_creation_time:
+        while time < self.last_test_frame * self.frame_creation_time:
             eeg = self.eeg_tensor[:,time-self.segment_length:time]
             eeg = np.array([self.eeg_transformer.transform(eeg)])
             eeg = torch.FloatTensor(eeg)
