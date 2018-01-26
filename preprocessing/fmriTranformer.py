@@ -21,7 +21,7 @@ class FmriTransformer:
             time: time of sample
             fmri_tensor: fmri_tensor: matrix [z, y, x, num] where num is time dimention
 
-        Returns: smooted fmri for time
+        Returns: smoothed fmri for time
 
         """
         result = np.zeros_like(fmri_tensor[..., 0])
