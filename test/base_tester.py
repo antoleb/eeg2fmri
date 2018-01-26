@@ -42,6 +42,7 @@ class BaseTester:
             eeg = np.array([self.eeg_transformer.transform(eeg)])
             eeg = torch.FloatTensor(eeg)
             eeg = torch.autograd.Variable(eeg)
+            eeg = eeg.cuda()
 
             output = self.net(eeg).data.numpy()
 
