@@ -48,6 +48,7 @@ class BaseTrainer:
                 history.append(float(l.data))
                 e, f = self.val_batcher.get_batch(batch_size)
                 e = e.cuda()
+                f *= self.y_multiplier
                 f = f.cuda()
                 res = self.net(e)
                 l = self.loss(res, f)
