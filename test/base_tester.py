@@ -27,7 +27,7 @@ class BaseTester:
         self.mean_brain = self.fmri_tensor[..., first_train_frame:last_train_frame+1].mean(-1) * self.fmri_multiplicator
         self.mean_brain = np.rollaxis(self.mean_brain, 2)
 
-        self.net = torch.load(os.path.join(report_directory, 'net.pt')).cuda()
+        self.net = torch.load(os.path.join(report_directory, 'net.pt'))#.cuda()
 
     @staticmethod
     def loss(a, b):
@@ -46,19 +46,18 @@ class BaseTester:
             eeg = np.array([self.eeg_transformer.transform(eeg)])
             eeg = torch.FloatTensor(eeg)
             eeg = torch.autograd.Variable(eeg, requires_grad=True)
-            eeg = eeg.cuda()
+            #eeg = eeg.cuda()
 
             output = self.net(eeg)
 
             frame_index = time // self.frame_creation_time
             slice_index = (time % self.frame_creation_time) // self.slice_creation_time
 
-            gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index])).cuda()
+            gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index])).cuda() * self.fmri_multiplicator
             l = loss(output, gt)
             l.backward()
 
             output = output.cpu().data.numpy()
-
 
             output_slice = output[0, slice_index]
             ground_truth_slice = self.fmri_tensor[..., slice_index, frame_index] * self.fmri_multiplicator
