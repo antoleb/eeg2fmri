@@ -40,6 +40,7 @@ class BaseTester:
         grad_statistic = []
         frame_index_list = []
         slice_index_list = []
+        loss = torch.nn.MSELoss()
         while time < self.last_test_frame * self.frame_creation_time:
             eeg = self.eeg_tensor[:,time-self.segment_length:time]
             eeg = np.array([self.eeg_transformer.transform(eeg)])
@@ -47,7 +48,13 @@ class BaseTester:
             eeg = torch.autograd.Variable(eeg, requires_grad=True)
             eeg = eeg.cuda()
 
-            output = self.net(eeg).cpu().data.numpy()
+            output = self.net(eeg)#.cpu().data.numpy()
+
+            gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index])).cuda()
+            l = loss(output, gt)
+            l.backward()
+
+            output = output.cpu().data.numpy()
 
             frame_index = time // self.frame_creation_time
             slice_index = (time % self.frame_creation_time) // self.slice_creation_time
