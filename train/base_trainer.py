@@ -19,7 +19,7 @@ class BaseTrainer:
         self.net = Net().cuda()
         self.loss = torch.nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=lr)
-        
+
     def save(self, history, val_history):
         history = np.array(history)
         val_history = np.array(val_history)
@@ -45,14 +45,14 @@ class BaseTrainer:
             self.optimizer.step()
 
             if iteration % history_step == 0:
-                history.append(float(l.data))
+                history.append(float(l.cpu().data))
                 e, f = self.val_batcher.get_batch(batch_size)
                 e = e.cuda()
                 f *= self.y_multiplier
                 f = f.cuda()
                 res = self.net(e)
                 l = self.loss(res, f)
-                val_history.append(l.data)
+                val_history.append(float(l.cpu().data))
 
             if iteration % iter_mul == 0:
                 batch_size *= batch_size_mul
