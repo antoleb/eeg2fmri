@@ -27,7 +27,7 @@ class BaseTrainer:
         np.save(os.path.join(self.save_dir, 'val_history.npy'), val_history)
         torch.save(self.net, os.path.join(self.save_dir, 'net.pt'))
 
-    def train(self, num_iters, history_step, batch_size=1, batch_size_mul=2, iter_mul=5000, batch_size_max=128):
+    def train(self, num_iters, history_step,batch_size_max=128, batch_size=1, batch_size_mul=2, iter_mul=5000, ):
         iteration = 0
         history = []
         val_history = []
