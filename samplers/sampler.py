@@ -34,13 +34,20 @@ class Sampler:
         self.fmri_data = {man: self.read_img(os.path.join(self.fmri_dir, man))
                           for man in self.all_people}
 
+
+
     @staticmethod
     def read_vhdr(path):
+        def read_data(path):
+            eeg = mne.io.read_raw_brainvision(path, event_id={"Scan Start": 1})
+            data = np.delete(eeg.get_data(), [len(eeg.ch_names) - 1], 0)
+            return data[:, mne.find_events(eeg)[0][0]:]
+
         path = os.path.join(path, 'export')
         files = os.listdir(path)
         for file in files:
             if file[-5:] == '.vhdr':
-                return mne.io.read_raw_brainvision(os.path.join(path, file)).get_data()
+                return read_data(os.path.join(path, file))
 
     @staticmethod
     def read_img(path):
