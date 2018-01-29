@@ -71,10 +71,10 @@ class UpBlock(nn.Module):
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.down_block32 = nn.Sequential(ResBlock(65, 32),
-                                     ResBlock(65, 32),
-                                     ResBlock(65, 32),
-                                     DownBlock(65, 128))
+        self.down_block32 = nn.Sequential(ResBlock(64, 32),
+                                     ResBlock(64, 32),
+                                     ResBlock(64, 32),
+                                     DownBlock(64, 128))
 
         self.down_block16 = nn.Sequential(ResBlock(128, 32),
                                      ResBlock(128, 32),
@@ -117,7 +117,7 @@ class Net(nn.Module):
                                 bias=False
                                 )
 
-        self.net = nn.Sequential(#self.down_block64,
+        self.net = nn.Sequential(
                                  self.down_block32,
                                  self.down_block16,
                                  self.block8,
