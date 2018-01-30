@@ -7,18 +7,17 @@ import numpy as np
 
 
 class BaseTrainer:
-    def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir, y_multiplier=100, lr=1e-4):
+    def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir):
         assert not os.path.exists(save_dir)
         os.makedirs(save_dir)
 
         self.save_dir = save_dir
-        self.y_multiplier = y_multiplier
         #sample may use information about next two frames
         self.train_batcher = Batcher(data_dir, 0, 540 * (num_train_frames - 1))
         self.val_batcher = Batcher(data_dir, 540 * (num_train_frames + 1), 540 * (num_train_frames + num_val_frames - 1))
         self.net = Net().cuda()
         self.loss = torch.nn.MSELoss()
-        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.net.parameters(), lr=1e-4)
 
     def save(self, history, val_history):
         history = np.array(history)
@@ -27,7 +26,7 @@ class BaseTrainer:
         np.save(os.path.join(self.save_dir, 'val_history.npy'), val_history)
         torch.save(self.net, os.path.join(self.save_dir, 'net.pt'))
 
-    def train(self, num_iters, history_step,batch_size_max=128, batch_size=1, batch_size_mul=2, iter_mul=5000, ):
+    def train(self, num_iters, history_step, batch_size=128):
         iteration = 0
         history = []
         val_history = []
@@ -36,7 +35,6 @@ class BaseTrainer:
             iteration += 1
             X, y = self.train_batcher.get_batch(batch_size)
             X = X.cuda()
-            y *= self.y_multiplier
             y = y.cuda()
             res = self.net(X)
             self.optimizer.zero_grad()
@@ -45,17 +43,12 @@ class BaseTrainer:
             self.optimizer.step()
 
             if iteration % history_step == 0:
-                history.append(float(l.cpu().data))
+                history.append(float(l.data))
                 e, f = self.val_batcher.get_batch(batch_size)
                 e = e.cuda()
-                f *= self.y_multiplier
                 f = f.cuda()
                 res = self.net(e)
                 l = self.loss(res, f)
-                val_history.append(float(l.cpu().data))
-
-            if iteration % iter_mul == 0:
-                batch_size *= batch_size_mul
-                batch_size = max(batch_size, batch_size_max)
+                val_history.append(l.data)
 
         self.save(history, val_history)
