@@ -7,7 +7,7 @@ import numpy as np
 
 
 class BaseTrainer:
-    def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir):
+    def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir, fmri_mult=100):
         assert not os.path.exists(save_dir)
         os.makedirs(save_dir)
 
@@ -18,6 +18,7 @@ class BaseTrainer:
         self.net = Net().cuda()
         self.loss = torch.nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=1e-4)
+        self.fmri_mult = fmri_mult
 
     def save(self, history, val_history):
         history = np.array(history)
@@ -35,7 +36,7 @@ class BaseTrainer:
             iteration += 1
             X, y = self.train_batcher.get_batch(batch_size)
             X = X.cuda()
-            y = y.cuda()
+            y = y.cuda() * self.fmri_mult
             res = self.net(X)
             self.optimizer.zero_grad()
             l = self.loss(res, y)
@@ -46,7 +47,7 @@ class BaseTrainer:
                 history.append(float(l.data))
                 e, f = self.val_batcher.get_batch(batch_size)
                 e = e.cuda()
-                f = f.cuda()
+                f = f.cuda() * self.fmri_mult
                 res = self.net(e)
                 l = self.loss(res, f)
                 val_history.append(l.data)
