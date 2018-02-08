@@ -6,6 +6,7 @@ import os
 import gc
 import numpy as np
 
+
 class BaseTrainer:
     def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir, fmri_mult=100):
         assert not os.path.exists(save_dir)
