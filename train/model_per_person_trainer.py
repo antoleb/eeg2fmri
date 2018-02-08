@@ -31,10 +31,13 @@ class ModelPerPersonTrainer:
                                   num_val_frames=self.num_val_frames,
                                   save_dir=os.path.join(self.save_path, man),
                                   fmri_mult=self.fmri_mult,
-                                  max_batch_size=self.max_batch_size,
-                                  start_batch_size=self.start_batch_size,
-                                  batch_size_mul=self.batch_size_mul,
-                                  batch_size_iters=self.batch_size_iters
+
                                   )
 
-            trainer.train(self.num_iters, self.history_step, self.batch_size)
+            trainer.train(self.num_iters,
+                          self.history_step,
+                          self.batch_size,
+                          max_batch_size=self.max_batch_size,
+                          start_batch_size=self.start_batch_size,
+                          batch_size_mul=self.batch_size_mul,
+                          batch_size_iters=self.batch_size_iters)
