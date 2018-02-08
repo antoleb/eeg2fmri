@@ -3,8 +3,8 @@ from nets.low_net import Net
 
 import torch
 import os
+import gc
 import numpy as np
-
 
 class BaseTrainer:
     def __init__(self, data_dir, num_train_frames, num_val_frames, save_dir, fmri_mult=100):
@@ -27,10 +27,11 @@ class BaseTrainer:
         np.save(os.path.join(self.save_dir, 'val_history.npy'), val_history)
         torch.save(self.net, os.path.join(self.save_dir, 'net.pt'))
 
-    def train(self, num_iters, history_step, batch_size=128):
+    def train(self, num_iters, history_step, max_batch_size=128, start_batch_size=1, batch_size_mul=2, batch_size_iters=100):
         iteration = 0
         history = []
         val_history = []
+        batch_size = start_batch_size
 
         for _ in range(num_iters):
             iteration += 1
@@ -51,5 +52,10 @@ class BaseTrainer:
                 res = self.net(e)
                 l = self.loss(res, f)
                 val_history.append(l.data)
+
+            if iteration % batch_size_iters == 0:
+                batch_size *= batch_size_mul
+                batch_size = min(batch_size, max_batch_size)
+                gc.collect()
 
         self.save(history, val_history)
