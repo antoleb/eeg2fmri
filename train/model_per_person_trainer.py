@@ -36,8 +36,9 @@ class ModelPerPersonTrainer:
 
             trainer.train(self.num_iters,
                           self.history_step,
-                          self.batch_size,
                           max_batch_size=self.max_batch_size,
                           start_batch_size=self.start_batch_size,
                           batch_size_mul=self.batch_size_mul,
                           batch_size_iters=self.batch_size_iters)
+
+            print('done for man {}'.format(man))
