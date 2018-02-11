@@ -72,7 +72,7 @@ class BaseTester:
             net_losses.append(self.loss(output_slice, ground_truth_slice))
             base_losses.append(self.loss(mean_slice, ground_truth_slice))
 
-            grad_statistic.append(eeg.grad)
+            grad_statistic.append(eeg.grad.cpu().data.numpy())
 
             frame_index_list.append(frame_index)
             slice_index_list.append(slice_index)
