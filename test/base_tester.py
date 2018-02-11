@@ -57,9 +57,9 @@ class BaseTester:
 
             gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index]).cuda()) * self.fmri_multiplicator
 
-            output = output.cpu().data.numpy()
+            output_cpu = output.cpu().data.numpy()
 
-            output_slice = output[0, slice_index]
+            output_slice = output_cpu[0, slice_index]
             ground_truth_slice = self.fmri_tensor[..., slice_index, frame_index] * self.fmri_multiplicator
             mean_slice = self.mean_brain[slice_index]
 
