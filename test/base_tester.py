@@ -74,9 +74,9 @@ class BaseTester:
             slice_index_list.append(slice_index)
 
             new_gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index]).cuda()) * 0
-            new_gt[..., slice_index] = gt[..., slice_index]
+            new_gt.data[..., slice_index] = gt[..., slice_index]
 
-            l = loss(output, gt)
+            l = loss(output, new_gt)
             l.backward()
 
             grad_statistic.append(eeg.grad.cpu().data.numpy())
