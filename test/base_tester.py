@@ -27,7 +27,7 @@ class BaseTester:
         self.mean_brain = self.fmri_tensor[..., first_train_frame:last_train_frame+1].mean(-1) * self.fmri_multiplicator
         self.mean_brain = np.rollaxis(self.mean_brain, 2)
 
-        self.net = torch.load(os.path.join(report_directory, 'net.pt')).cuda()
+        self.net = torch.load(os.path.join(report_directory, 'net.pt')).cuda().eval()
 
     @staticmethod
     def loss(a, b):
