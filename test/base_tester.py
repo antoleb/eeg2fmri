@@ -55,7 +55,7 @@ class BaseTester:
             frame_index = time // self.frame_creation_time
             slice_index = (time % self.frame_creation_time) // self.slice_creation_time
 
-            gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index])) * self.fmri_multiplicator
+            gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index]).cuda()) * self.fmri_multiplicator
             l = loss(output, gt)
             l.backward()
 
