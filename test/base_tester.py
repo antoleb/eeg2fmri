@@ -74,7 +74,7 @@ class BaseTester:
             slice_index_list.append(slice_index)
 
             new_gt = torch.FloatTensor(self.fmri_tensor[..., frame_index]) * 0
-            new_gt[..., slice_index] = ground_truth_slice
+            new_gt[..., slice_index] = torch.FloatTensor(ground_truth_slice)
             new_gt = torch.autograd.Variable(new_gt.cuda())
 
             l = loss(output, new_gt)
