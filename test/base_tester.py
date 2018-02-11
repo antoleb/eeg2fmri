@@ -56,8 +56,6 @@ class BaseTester:
             slice_index = (time % self.frame_creation_time) // self.slice_creation_time
 
             gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index]).cuda()) * self.fmri_multiplicator
-            l = loss(output, gt)
-            l.backward()
 
             output = output.cpu().data.numpy()
 
@@ -72,10 +70,16 @@ class BaseTester:
             net_losses.append(self.loss(output_slice, ground_truth_slice))
             base_losses.append(self.loss(mean_slice, ground_truth_slice))
 
-            grad_statistic.append(eeg.grad.cpu().data.numpy())
-
             frame_index_list.append(frame_index)
             slice_index_list.append(slice_index)
+
+            new_gt = torch.autograd.Variable(torch.FloatTensor(self.fmri_tensor[..., frame_index]).cuda()) * 0
+            new_gt[..., slice_index] = gt[..., slice_index]
+
+            l = loss(output, gt)
+            l.backward()
+
+            grad_statistic.append(eeg.grad.cpu().data.numpy())
 
             time += self.slice_creation_time
 
