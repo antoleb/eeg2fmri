@@ -47,8 +47,8 @@ class BaseTester:
         while time < self.last_test_frame * self.frame_creation_time:
             eeg = self.eeg_tensor[:,time-self.segment_length:time]
             eeg = np.array([self.eeg_transformer.transform(eeg)])
-            eeg = torch.FloatTensor(eeg).cuda()
-            eeg = torch.autograd.Variable(eeg, requires_grad=True)
+            eeg = torch.FloatTensor(eeg)
+            eeg = torch.autograd.Variable(eeg.cuda(), requires_grad=True)
 
             output = self.net(eeg)
 
