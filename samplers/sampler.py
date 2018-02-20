@@ -47,7 +47,7 @@ class Sampler:
         files = os.listdir(path)
         for file in files:
             if file[-5:] == '.vhdr':
-                return read_data(os.path.join(path, file))
+                return read_data(os.path.join(path, file))[::-1]
 
     @staticmethod
     def read_img(path):
