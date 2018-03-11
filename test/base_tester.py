@@ -27,6 +27,9 @@ class BaseTester:
         self.mean_brain = self.fmri_tensor[..., first_train_frame:last_train_frame+1].mean(-1) * self.fmri_multiplicator
         self.mean_brain = np.rollaxis(self.mean_brain, 2)
 
+        self.mean_test_brain = self.fmri_tensor[..., first_test_frame:last_test_frame].mean(-1) * self.fmri_multiplicator
+        self.mean_test_brain = np.rollaxis(self.mean_test_brain, 2)
+
         self.net = torch.load(os.path.join(report_directory, 'net.pt')).cuda().eval()
 
     @staticmethod
@@ -37,6 +40,7 @@ class BaseTester:
         time = self.first_test_frame * self.frame_creation_time
         net_losses = []
         base_losses = []
+        base_test_mean_losses = []
         grad_statistic = []
         frame_index_list = []
         slice_index_list = []
@@ -62,6 +66,7 @@ class BaseTester:
             output_slice = output_cpu[0, slice_index]
             ground_truth_slice = self.fmri_tensor[..., slice_index, frame_index] * self.fmri_multiplicator
             mean_slice = self.mean_brain[slice_index]
+            test_mean_slice = self.mean_test_brain[slice_index]
 
             net_predictions.append(output_slice)
             mean_predictions.append(mean_slice)
@@ -69,15 +74,17 @@ class BaseTester:
 
             net_losses.append(self.loss(output_slice, ground_truth_slice))
             base_losses.append(self.loss(mean_slice, ground_truth_slice))
+            base_test_mean_losses.append(self.loss(test_mean_slice, ground_truth_slice))
 
             frame_index_list.append(frame_index)
             slice_index_list.append(slice_index)
 
-            new_gt = torch.FloatTensor(self.fmri_tensor[..., frame_index]) * 0
-            new_gt[..., slice_index] = torch.FloatTensor(ground_truth_slice)
-            new_gt = torch.autograd.Variable(new_gt.cuda())
+            #new_gt = torch.FloatTensor(self.fmri_tensor[..., frame_index]) * 0
+            #new_gt[..., slice_index] = torch.FloatTensor(ground_truth_slice)
+            #new_gt = torch.autograd.Variable(new_gt.cuda())
 
-            l = loss(output, new_gt)
+            l = loss(output[0, slice_index],
+                     gt[..., slice_index])
             l.backward()
 
             grad_statistic.append(eeg.grad.cpu().data.numpy())
@@ -92,6 +99,7 @@ class BaseTester:
 
         np.save(os.path.join(self.report_directory, 'base_losses.npy'), base_losses)
         np.save(os.path.join(self.report_directory, 'net_losses.npy'), net_losses)
+        np.save(os.path.join(self.report_directory, 'base_test_mean_losses.npy'), base_test_mean_losses)
         np.save(os.path.join(self.report_directory, 'grad_statistic.npy'), grad_statistic)
         np.save(os.path.join(self.report_directory, 'frame_index_list.npy'), frame_index_list)
         np.save(os.path.join(self.report_directory, 'slice_index_list.npy'), slice_index_list)
