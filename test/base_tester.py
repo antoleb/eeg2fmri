@@ -47,6 +47,7 @@ class BaseTester:
         net_predictions = []
         mean_predictions = []
         gt_predictions = []
+        residual_loss_list = []
         loss = torch.nn.MSELoss()
         while time < self.last_test_frame * self.frame_creation_time:
             eeg = self.eeg_tensor[:,time-self.segment_length:time]
@@ -74,17 +75,13 @@ class BaseTester:
 
             net_losses.append(self.loss(output_slice, ground_truth_slice))
             base_losses.append(self.loss(mean_slice, ground_truth_slice))
-            base_test_mean_losses.append(self.loss(test_mean_slice, ground_truth_slice))
+            base_test_mean_losses.append(self.output_slice(test_mean_slice, ground_truth_slice))
+            residual_loss_list.append(np.sqrt((ground_truth_slice - output_slice)/(ground_truth_slice * ground_truth_slice)))
 
             frame_index_list.append(frame_index)
             slice_index_list.append(slice_index)
 
-            #new_gt = torch.FloatTensor(self.fmri_tensor[..., frame_index]) * 0
-            #new_gt[..., slice_index] = torch.FloatTensor(ground_truth_slice)
-            #new_gt = torch.autograd.Variable(new_gt.cuda())
-
-            l = loss(output[0, slice_index],
-                     gt[..., slice_index])
+            l = loss(output[0, slice_index], gt[..., slice_index])
             l.backward()
 
             grad_statistic.append(eeg.grad.cpu().data.numpy())
@@ -96,6 +93,7 @@ class BaseTester:
         grad_statistic = np.array(grad_statistic)
         frame_index_list = np.array(frame_index_list)
         slice_index_list = np.array(slice_index_list)
+        residual_loss_list = np.array(residual_loss_list)
 
         np.save(os.path.join(self.report_directory, 'base_losses.npy'), base_losses)
         np.save(os.path.join(self.report_directory, 'net_losses.npy'), net_losses)
@@ -106,7 +104,7 @@ class BaseTester:
         np.save(os.path.join(self.report_directory, 'net_predictions.npy'), net_predictions)
         np.save(os.path.join(self.report_directory, 'mean_predictions.npy'), mean_predictions)
         np.save(os.path.join(self.report_directory, 'gt_predictions.npy'), gt_predictions)
-
+        np.save(os.path.join(self.report_directory, 'residual_loss_list.npy'), residual_loss_list)
 
 
 
