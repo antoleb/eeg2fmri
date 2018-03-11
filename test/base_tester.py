@@ -76,7 +76,7 @@ class BaseTester:
             net_losses.append(self.loss(output_slice, ground_truth_slice))
             base_losses.append(self.loss(mean_slice, ground_truth_slice))
             base_test_mean_losses.append(self.loss(test_mean_slice, ground_truth_slice))
-            residual_loss_list.append(np.sqrt((ground_truth_slice - output_slice)/(ground_truth_slice * ground_truth_slice + 1e-9)))
+            residual_loss_list.append(np.sqrt((ground_truth_slice - output_slice)**2/(ground_truth_slice * ground_truth_slice + 1e-9)))
 
             frame_index_list.append(frame_index)
             slice_index_list.append(slice_index)
