@@ -43,8 +43,8 @@ class DownBlock(nn.Module):
         super().__init__()
         self.conv = nn.Conv2d(in_channels,
                               out_channels,
-                              kernel_size=3,
-                              stride=2,
+                              kernel_size=(3, 6),
+                              stride=(2, 4),
                               padding=1,
                               )
 
@@ -79,35 +79,35 @@ class Net(nn.Module):
         self.down_block16 = nn.Sequential(ResBlock(128, 32),
                                      ResBlock(128, 32),
                                      ResBlock(128, 32),
-                                     ResBlock(128, 32),
+                                     #ResBlock(128, 32),
                                      DownBlock(128, 256))
 
 
         self.block8 = nn.Sequential(ResBlock(256, 64),
                                         ResBlock(256, 64),
-                                        ResBlock(256, 64),
-                                        ResBlock(256, 64),
-                                        ResBlock(256, 64),
+                                        #ResBlock(256, 64),
+                                        #ResBlock(256, 64),
+                                        #ResBlock(256, 64),
                                         UpBlock(256, 256)
                                         )
 
         self.up_block16 = nn.Sequential(ResBlock(256, 64),
                                         ResBlock(256, 64),
-                                        ResBlock(256, 64),
-                                        ResBlock(256, 64),
+                                        #ResBlock(256, 64),
+                                        #ResBlock(256, 64),
                                         UpBlock(256, 128)
                                         )
 
         self.up_block32 = nn.Sequential(ResBlock(128, 32),
                                         ResBlock(128, 32),
-                                        ResBlock(128, 32),
-                                        ResBlock(128, 32),
+                                        #ResBlock(128, 32),
+                                        #ResBlock(128, 32),
                                         UpBlock(128, 128),
                                         )
         self.up_block64 = nn.Sequential(ResBlock(128, 32),
                                         ResBlock(128, 32),
-                                        ResBlock(128, 32),
-                                        ResBlock(128, 32),
+                                        #ResBlock(128, 32),
+                                        #ResBlock(128, 32),
                                         )
         self.result = nn.Conv2d(128,
                                 30,
