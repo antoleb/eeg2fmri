@@ -85,7 +85,7 @@ class Sampler:
             signal = eeg[..., start:end]
 
             x = eegHandler.transform(signal).reshape(-1)
-            y = fmriHandler.get_fmri(end, fmri).reshape(-1)
+            y = fmriHandler.get_fmri(end, fmri)
             x_list.append(x)
             y_list.append(y)
 
