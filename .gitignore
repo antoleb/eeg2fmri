@@ -1,0 +1,5 @@
+.idea/
+*.swp
+*.map
+__pycache__
+.ipynb_checkpoints

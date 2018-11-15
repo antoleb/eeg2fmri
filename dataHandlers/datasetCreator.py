@@ -56,20 +56,19 @@ class Sampler:
             if file[-12:] == 'cross.nii.gz':
                 return nib.load(os.path.join(path, file)).get_data()
 
-    def create_one_man_dataset(self, man, dataset_path):
+    def create_one_man_dataset(self, patient, start_time, end_time):
         """
-        Creates dataset for one man
+        Samples data from start_time to end_time for man
         Args:
-            man: string of man index
-            dataset_path: path to create dataset
+            patient: string of man index
+            start_time: lower bound of data creation time
+            end_time: upper bound of data creation time
 
-        Returns: None
+        Returns: (X, Y)
 
         """
-        assert not os.path.exists(dataset_path)
-        os.makedirs(dataset_path)
-        eeg = self.eeg_data[man]
-        fmri = self.fmri_data[man]
+        eeg = self.eeg_data[patient]
+        fmri = self.fmri_data[patient]
 
         eegHandler = Eeg2Tftr(nperseg=self.eeg_nperseg, padded=self.eeg_padded, scale=self.eeg_scale)
         fmriHandler = FmriTransformer(num_slices=self.num_slices, frame_creation_time=self.frame_creation_time,
@@ -77,37 +76,22 @@ class Sampler:
 
         start = 0
         end = start + self.segment_length
-        while end < eeg.shape[1] and end <= self.frame_creation_time * (fmri.shape[-1] - 1):
+        x_list = []
+        y_list = []
+        while end < eeg.shape[1] and end <= self.frame_creation_time * (fmri.shape[-1] - 1) and end < end_time:
             signal = eeg[..., start:end]
 
-            x = eegHandler.transform(signal)
-            y = fmriHandler.get_fmri(end, fmri)
-            y = np.rollaxis(y, 2)
-
-            x_path = os.path.join(dataset_path, 'x_{}.npy'.format(end))
-            y_path = os.path.join(dataset_path, 'y_{}.npy'.format(end))
-
-            np.save(x_path, x)
-            np.save(y_path, y)
+            x = eegHandler.transform(signal).reshape(-1)
+            y = fmriHandler.get_fmri(end, fmri).reshape(-1)
+            x_list.append(x)
+            y_list.append(y)
 
             start += self.step
             end += self.step
 
-    def create_dataset(self, dataset_path):
-        """
-        Creates dataset with one man dataset subfolders
-        Args:
-            dataset_path: path to create dataset
+        x_list = np.array(x_list)
+        y_list = np.array(y_list)
 
-        Returns: None
-
-        """
-        assert not os.path.exists(dataset_path)
-        os.makedirs(dataset_path)
-
-        for man in self.all_people:
-            self.create_one_man_dataset(man, os.path.join(dataset_path, man))
-
-
+        return x_list, y_list
 
 
