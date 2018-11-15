@@ -1,17 +1,20 @@
-from preprocessing.eeg2tftr import Eeg2Tftr
-from preprocessing.fmriTranformer import FmriTransformer
+import mne
+import os
 
 import numpy as np
 import nibabel as nib
 
-import mne
-import torch
-import os
+from preprocessing.eeg2tftr import Eeg2Tftr
+from preprocessing.fmriTranformer import FmriTransformer
+from dataHandlers import settings
+
+
 
 
 class Sampler:
     def __init__(self, root_dir, random_seed=42, segment_length=1024, eeg_nperseg=63, eeg_padded=False, eeg_scale=1e+5,
-                 fmri_scale=4095**-1,num_slices=30, frame_creation_time=540, step=20):
+                 fmri_scale=4095**-1, num_slices=settings.num_slices, frame_creation_time=settings.frame_creation_time,
+                 step=20):
         self.eeg_nperseg = eeg_nperseg
         self.eeg_padded = eeg_padded
         self.eeg_scale = eeg_scale
