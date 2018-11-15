@@ -28,11 +28,11 @@ class Sampler:
         self.eeg_dir = os.path.join(root_dir, 'EEG')
         self.fmri_dir = os.path.join(root_dir, 'fMRI')
 
-        self.all_people = np.array(os.listdir(self.fmri_dir))
+        self.patient_list = np.array(os.listdir(self.fmri_dir))
         self.eeg_data = {man: self.read_vhdr(os.path.join(self.eeg_dir, man))
-                         for man in self.all_people}
+                         for man in self.patient_list}
         self.fmri_data = {man: self.read_img(os.path.join(self.fmri_dir, man))
-                          for man in self.all_people}
+                          for man in self.patient_list}
 
 
 
@@ -74,7 +74,7 @@ class Sampler:
         fmriHandler = FmriTransformer(num_slices=self.num_slices, frame_creation_time=self.frame_creation_time,
                                       fmri_scale=self.fmri_scale)
 
-        start = 0
+        start = start_time
         end = start + self.segment_length
         x_list = []
         y_list = []
